@@ -15,7 +15,7 @@ import animationData from "../../animations/typing.json";
 import io from "socket.io-client";
 import UpdateGroupChatModal from "./UpdateGroupChatModal";
 import { ChatState } from "../../Context/ChatProvider";
-const ENDPOINT = "http://localhost:7000";
+const ENDPOINT = "https://codechat-backend.onrender.com/";
 var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
