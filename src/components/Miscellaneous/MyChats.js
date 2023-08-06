@@ -16,7 +16,7 @@ const MyChats = ({ fetchAgain }) => {
   const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
 
   const toast = useToast();
-
+  
   const fetchChats = async () => {
     // console.log(user._id);
     try {
@@ -92,6 +92,7 @@ const MyChats = ({ fetchAgain }) => {
         {chats ? (
           <Stack overflowY="scroll">
             {chats.map((chat) => (
+              
               <Box
                 onClick={() => setSelectedChat(chat)}
                 cursor="pointer"
@@ -123,7 +124,7 @@ const MyChats = ({ fetchAgain }) => {
                 </Text>
                 {chat.latestMessage && (
                   <Text fontSize="xs">
-                    <b>{chat.latestMessage.sender.name} : </b>
+                    <b>{chat.latestMessage.sender._id===user._id?"You":chat.latestMessage.sender.name} : </b>
                     {chat.latestMessage.content.length > 50
                       ? chat.latestMessage.content.substring(0, 51) + "..."
                       : chat.latestMessage.content}

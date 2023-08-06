@@ -49,15 +49,9 @@ const SideDrawer = () => {
       localStorage.removeItem("userInfo");
       navigate("/");
     }
-    const handleSearch=async()=>{
+    const handleSearch=async(query)=>{
+      setSearch(query);
       if(!search){
-          toast({
-          title: "Please Enter something to search",
-          status: "warning",
-          duration: 5000,
-          isClosable: true,
-          position: "top-left",
-        });
         return;
       }
 
@@ -180,11 +174,12 @@ const SideDrawer = () => {
             <Box display="flex" pb={2}>
               <Input
                 placeholder="Search here..."
-                mr={2}
+                // mr={2}
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                // onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => handleSearch(e.target.value)}
               />
-              <Button onClick={handleSearch}>Go</Button>
+              {/* <Button onClick={handleSearch}>Go</Button> */}
             </Box>
             {loading ? (
               <ChatLoading />

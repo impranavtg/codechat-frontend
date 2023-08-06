@@ -4,8 +4,9 @@ import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
 import { VStack } from "@chakra-ui/layout";
 import { useToast } from "@chakra-ui/toast";
 import axios from "axios";
-import { useState } from "react";
+import { useState,useRef } from "react";
 import { useNavigate } from 'react-router-dom';
+import ReCAPTCHA from "react-google-recaptcha";
 
 const Signup = () => {
   const [show, setShow] = useState(false);
@@ -17,6 +18,8 @@ const Signup = () => {
   const [password, setPassword] = useState();
   const [dp, setDp] = useState();
   const [picLoading, setPicLoading] = useState(false);
+  const [captchaValue,setCaptchaValue]=useState("");
+  const captchaRef = useRef();
 
   const toast=useToast();
   let navigate=useNavigate()
@@ -130,6 +133,10 @@ const Signup = () => {
     }
 };
 
+ const onChange=async (value)=> {
+    setCaptchaValue(value);
+}
+
   return (
     <VStack spacing="5px">
       <FormControl id="first-name" isRequired>
@@ -194,6 +201,11 @@ const Signup = () => {
           onChange={(e) => postDetails(e.target.files[0])}
         />
       </FormControl>
+      <ReCAPTCHA
+      ref={captchaRef}
+    sitekey="6Ldpm3UnAAAAALcy5InZ5PpXgxXaTDe_67k3g8y3"
+    onChange={onChange}
+  />
       <Button
         colorScheme='orange'
         width="100%"

@@ -2,10 +2,11 @@ import { Button } from "@chakra-ui/button";
 import { FormControl, FormLabel } from "@chakra-ui/form-control";
 import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
 import { VStack } from "@chakra-ui/layout";
-import { useState } from "react";
+import { useState,useRef } from "react";
 import axios from "axios";
 import { useToast } from "@chakra-ui/react";
 import { useNavigate } from 'react-router-dom';
+import ReCAPTCHA from "react-google-recaptcha";
 // import { ChatState } from "../../Context/ChatProvider";
 
 const Login = () => {
@@ -15,12 +16,15 @@ const Login = () => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [loading, setLoading] = useState(false);
+  const [captchaValue,setCaptchaValue]=useState("");
+  const captchaRef = useRef();
 
    let navigate=useNavigate()
 //   const { setUser } = ChatState();
 
   const submitHandler = async () => {
     setLoading(true);
+    captchaRef.current.reset();
     if (!email || !password) {
       toast({
         title: "Please Fill all the Feilds",
@@ -69,6 +73,10 @@ const Login = () => {
       setLoading(false);
     }
   };
+
+  const onChange=async (value)=> {
+    setCaptchaValue(value);
+}
  
   return (
     <VStack spacing="10px">
@@ -97,6 +105,11 @@ const Login = () => {
           </InputRightElement>
         </InputGroup>
       </FormControl>
+      <ReCAPTCHA
+      ref={captchaRef}
+    sitekey="6Ldpm3UnAAAAALcy5InZ5PpXgxXaTDe_67k3g8y3"
+    onChange={onChange}
+  />
       <Button
         colorScheme="orange"
         width="100%"
