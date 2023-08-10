@@ -7,9 +7,10 @@ import axios from "axios";
 import { useToast } from "@chakra-ui/react";
 import { useNavigate } from 'react-router-dom';
 import ReCAPTCHA from "react-google-recaptcha";
-// import { ChatState } from "../../Context/ChatProvider";
+import { ChatState } from "../../Context/ChatProvider";
 
 const Login = () => {
+
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
   const toast = useToast();
@@ -43,10 +44,9 @@ const Login = () => {
           "Content-type": "application/json",
         },
       };
-
       const { data } = await axios.post(
         "api/auth/login",
-        { email, password },
+        {email, password},
         config
       );
 

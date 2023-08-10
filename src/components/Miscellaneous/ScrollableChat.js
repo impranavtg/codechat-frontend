@@ -3,9 +3,17 @@ import ScrollableFeed from 'react-scrollable-feed'
 import { isLastMessage, isSameSender,isSameSenderMargin,isSameUser } from '../../config/ChatLogics'
 import { ChatState } from '../../Context/ChatProvider'
 import { Avatar, Tooltip } from '@chakra-ui/react'
+import {AES,enc} from 'crypto-js';
+const SECRET_KEY = "0mzt3amdht5cstbhmr7hmdktr@s";
 
 const ScrollableChat = ({messages}) => {
     const {user}=ChatState();
+
+    const decryptMessage = (ciphertext)=>{
+      const bytes  = AES.decrypt(ciphertext,  SECRET_KEY);
+      const originalText = bytes.toString(enc.Utf8);
+      return originalText;
+  }
   return (
     <ScrollableFeed>
       {messages &&
@@ -36,7 +44,7 @@ const ScrollableChat = ({messages}) => {
                 maxWidth: "75%",
               }}
             >
-              {m.content}
+              {decryptMessage(m.content)}
             </span>
           </div>
         ))}

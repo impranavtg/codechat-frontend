@@ -12,11 +12,14 @@ import ScrollableChat from "./ScrollableChat";
 import Lottie from "lottie-react";
 import animationData from "../../animations/typing.json";
 import illustration from "../../animations/illustration.json";
-
+import {AES} from 'crypto-js';
 import io from "socket.io-client";
 import UpdateGroupChatModal from "./UpdateGroupChatModal";
 import { ChatState } from "../../Context/ChatProvider";
 const ENDPOINT = "https://codechat-backend.onrender.com/";
+// for dev
+// const ENDPOINT = "http://localhost:7000";
+const SECRET_KEY = "0mzt3amdht5cstbhmr7hmdktr@s";
 var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
@@ -28,14 +31,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [istyping, setIsTyping] = useState(false);
   const toast = useToast();
 
-//   const defaultOptions = {
-//     loop: true,
-//     // autoplay: true,
-//     animationData: animationData,
-//     // rendererSettings: {
-//     //   preserveAspectRatio: "xMidYMid slice",
-//     // },
-//   };
   const { selectedChat, setSelectedChat, user, notification, setNotification } =
     ChatState();
 
@@ -57,7 +52,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       );
       setMessages(data);
       setLoading(false);
-      console.log(data);
+      // console.log(data);
 
       socket.emit("join chat", selectedChat._id);
     } catch (error) {
@@ -82,11 +77,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             authToken: user.token,
           },
         };
+        const ciphertext = AES.encrypt(newMessage, SECRET_KEY).toString();
+        // console.log(ciphertext);
         setNewMessage("");
+
         const { data } = await axios.post(
           "/api/message",
           {
-            content: newMessage,
+            content: ciphertext,
             chatId: selectedChat,
           },
           config
@@ -191,6 +189,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     }, timerLength);
   };
 
+ 
+
   return (
     <>
       {selectedChat ? (
@@ -281,7 +281,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 value={newMessage}
                 onChange={typingHandler}
               />
-              <Button bg="#FF9933" onClick={sendMessageViaButton}><i class="fa fa-paper-plane" aria-hidden="true" ></i></Button>
+              <Button bg="#FF9933" onClick={sendMessageViaButton}><i className="fa fa-paper-plane" aria-hidden="true" ></i></Button>
               </Box>
               
             </FormControl>

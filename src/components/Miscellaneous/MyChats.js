@@ -3,12 +3,14 @@ import { Box, Stack, Text } from "@chakra-ui/layout";
 import { useToast } from "@chakra-ui/toast";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { getSender,getSenderFull } from "../../config/ChatLogics";
+import { getSender } from "../../config/ChatLogics";
 import ChatLoading from "../ChatLoading";
 import GroupChatModal from "./GroupChatModal";
 import { Button } from "@chakra-ui/react";
 import { ChatState } from "../../Context/ChatProvider";
 import { Avatar } from "@chakra-ui/avatar";
+import {AES,enc} from 'crypto-js';
+const SECRET_KEY = "0mzt3amdht5cstbhmr7hmdktr@s";
 
 const MyChats = ({ fetchAgain }) => {
   const [loggedUser, setLoggedUser] = useState();
@@ -16,7 +18,6 @@ const MyChats = ({ fetchAgain }) => {
   const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
 
   const toast = useToast();
-  
   const fetchChats = async () => {
     // console.log(user._id);
     try {
@@ -39,12 +40,17 @@ const MyChats = ({ fetchAgain }) => {
       });
     }
   };
-
   useEffect(() => {
     setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
     fetchChats();
     // eslint-disable-next-line
   }, [fetchAgain]);
+
+  const decryptMessage = (ciphertext)=>{
+      const bytes  = AES.decrypt(ciphertext,  SECRET_KEY);
+      const originalText = bytes.toString(enc.Utf8);
+      return originalText;
+  }
 
   return (
     <Box
@@ -85,14 +91,13 @@ const MyChats = ({ fetchAgain }) => {
         bg="#F8F8F8"
         w="100%"
         h="100%"
-        bg="white"
+        // bg="white"
         borderRadius="lg"
         overflowY="hidden"
       >
         {chats ? (
           <Stack overflowY="scroll">
             {chats.map((chat) => (
-              
               <Box
                 onClick={() => setSelectedChat(chat)}
                 cursor="pointer"
@@ -112,9 +117,9 @@ const MyChats = ({ fetchAgain }) => {
         name={!chat.isGroupChat
                     ? getSender(loggedUser, chat.users)
                     : chat.chatName}
-        // src={!chat.isGroupChat
-        //             ? getSenderFull(loggedUser, chat.users).dp
-        //             : chat.chatName}
+        src={!chat?.isGroupChat
+                    ? chat?.latestMessage?.sender?.dp
+                    : chat?.chatName}
       />
       <Box display="flex" flexDirection="column">
                 <Text>
@@ -125,9 +130,9 @@ const MyChats = ({ fetchAgain }) => {
                 {chat.latestMessage && (
                   <Text fontSize="xs">
                     <b>{chat.latestMessage.sender._id===user._id?"You":chat.latestMessage.sender.name} : </b>
-                    {chat.latestMessage.content.length > 50
-                      ? chat.latestMessage.content.substring(0, 51) + "..."
-                      : chat.latestMessage.content}
+                    {decryptMessage(chat.latestMessage.content).length > 50
+                      ? decryptMessage(chat.latestMessage.content).substring(0, 51) + "..."
+                      : decryptMessage(chat.latestMessage.content)}
                   </Text>
                   
                 )}

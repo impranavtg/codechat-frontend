@@ -4,6 +4,8 @@ import HomePage from "./Pages/HomePage";
 import ChatPage from "./Pages/ChatPage";
 import axios from 'axios';
 axios.defaults.baseURL="https://codechat-backend.onrender.com/";
+// for dev
+// axios.defaults.baseURL="http://localhost:7000"
 function App() {
   return (
     <div className="App">
