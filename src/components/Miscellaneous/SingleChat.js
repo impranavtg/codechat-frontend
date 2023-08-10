@@ -113,11 +113,12 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             authToken: user.token,
           },
         };
+        const ciphertext = AES.encrypt(newMessage, SECRET_KEY).toString();
         setNewMessage("");
         const { data } = await axios.post(
           "/api/message",
           {
-            content: newMessage,
+            content: ciphertext,
             chatId: selectedChat,
           },
           config
